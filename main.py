@@ -15,26 +15,25 @@ def highlightItem(image, x1, y1, x2, y2):
     cv2.putText(image, 'Detected object num 1', (x1 + 20, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 0), 2)
 
 
-print(f"You are currently using {platform.system()}")
-print("-----------------")
+def opening_file(path):
+    if platform.system() == "Windows":
+        path = path.replace("/", "\\")
+    elif platform.system() == "Darwin":
+        path = path.replace("\\", "/")
 
-# A modifier en fonction de l'image
-path = "data/Images/Chambre/IMG_6567.JPG"
+    try:
+        if not (os.path.isfile(path)):
+            raise FileNotFoundError("Image not found")
+        img = cv2.imread(path)
+    except FileNotFoundError as e:
+        print(e)
+        exit()
+    finally:
+        print("The path exists and the image is stored in img with shape {}".format(img.shape))
 
-if platform.system() == "Windows":
-    path = path.replace("/", "\\")
-elif platform.system() == "Darwin":
-    path = path.replace("\\", "/")
+    return img
 
-try:
-    if not (os.path.isfile(path)):
-        raise FileNotFoundError("Image not found")
-    img = cv2.imread(path)
-except FileNotFoundError as e:
-    print(e)
-    exit()
-finally:
-    print("The path exists and the image is stored in img with shape {}".format(img.shape))
+
 # # Code test ouvrir image d'un dossier
 # cv2.namedWindow("output", cv2.WINDOW_NORMAL)
 # image_test = cv2.imread("data\Images\Chambre\IMG_6567.JPG")  # Ajouter le chemin de l'image
@@ -45,24 +44,26 @@ finally:
 
 # ----------------Traitement d'image----------------
 # Convertir en grayscale + blur + threshold
-gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
-ret1, thresh1 = cv2.threshold(smooth_image_gb, 127, 255, cv2.ADAPTIVE_THRESH_MEAN_C)  # threshold
-# Plot original image and the thresholded image
-plt.figure()
-plt.subplot(221)
-plt.imshow(img)
-plt.title('Original image')
-plt.subplot(222)
-plt.imshow(gray_image, cmap='gray')
-plt.title('Grayscale image')
-plt.subplot(223)
-plt.imshow(smooth_image_gb, cmap='gray')
-plt.title('Blurred image')
-plt.subplot(224)
-plt.imshow(thresh1, cmap='gray')
-plt.title('Thresholded image')
-plt.show()
+def image_preprocessing_naive(image):
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
+    ret1, thresh1 = cv2.threshold(smooth_image_gb, 127, 255, cv2.ADAPTIVE_THRESH_MEAN_C)  # threshold
+    # Plot original image and the thresholded image
+    plt.figure()
+    plt.subplot(221)
+    plt.imshow(image)
+    plt.title('Original image')
+    plt.subplot(222)
+    plt.imshow(gray_image, cmap='gray')
+    plt.title('Grayscale image')
+    plt.subplot(223)
+    plt.imshow(smooth_image_gb, cmap='gray')
+    plt.title('Blurred image')
+    plt.subplot(224)
+    plt.imshow(thresh1, cmap='gray')
+    plt.title('Thresholded image')
+    plt.show()
+    return thresh1
 
 
 ####################
@@ -79,4 +80,12 @@ def contours_detection(filtered_image, baseImg):
     plt.show()
 
 
-contours_detection(thresh1, img)
+if __name__ == '__main__':
+    print(f"You are currently using {platform.system()}")
+    print("-----------------")
+    # A modifier en fonction de l'image
+    img_path = "data/Images/Chambre/IMG_6567.JPG"
+
+    img = opening_file(img_path)
+    thresh = image_preprocessing_naive(img)
+    contours_detection(thresh, img)
