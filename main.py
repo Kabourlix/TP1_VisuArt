@@ -16,3 +16,11 @@ test[0:50, 0:50] = (255, 0, 0)
 test[50:100, 50:100] = (0, 255, 0)
 cv2.imshow("test", test)
 cv2.waitKey(0)
+
+# Convertir en grayscale + blur + threshold
+cv2.namedWindow("output2", cv2.WINDOW_NORMAL)
+gray_image = cv2.cvtColor(image_test, cv2.COLOR_BGR2GRAY)
+smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
+ret1, thresh1 = cv2.threshold(smooth_image_gb, 127,255, cv2.ADAPTIVE_THRESH_MEAN_C) # threshold
+cv2.imshow("output2", thresh1)
+cv2.waitKey(0)
