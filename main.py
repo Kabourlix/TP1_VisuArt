@@ -44,6 +44,8 @@ def opening_file(path):
 
 # ----------------Traitement d'image----------------
 # Convertir en grayscale + blur + threshold
+
+#TODO : Modifier cette fonction ou faites en une autre pour faire le traitement d'image
 def image_preprocessing_naive(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
@@ -83,9 +85,9 @@ def contours_detection(filtered_image, baseImg):
 if __name__ == '__main__':
     print(f"You are currently using {platform.system()}")
     print("-----------------")
-    # A modifier en fonction de l'image
-    img_path = "data/Images/Chambre/IMG_6567.JPG"
+
+    img_path = "data/Images/Chambre/IMG_6567.JPG" # TODO : Modifier le chemin de l'image ici
 
     img = opening_file(img_path)
-    thresh = image_preprocessing_naive(img)
+    thresh = image_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
     contours_detection(thresh, img)
