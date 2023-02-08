@@ -5,7 +5,12 @@ import os
 
 # Mise en valeur d'un objet avec un bounding box
 def highlightItem(image,x1,y1,x2,y2):
-    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 5) # Dessiner un carré vert
+    # Dessiner un carré vert
+    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 10)
+    # Chercher taille du rectangle de text
+    # Afficher texte
+    cv2.rectangle(image, (x1-2, y1-70), (x2+6, y1), (0, 255, 0), -1)
+    cv2.putText(image, 'Detected object num 1', (x1+20, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0,0,0), 2)
 
 # Code test ouvrir image d'un dossier
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)
