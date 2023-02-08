@@ -34,3 +34,15 @@ smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
 ret1, thresh1 = cv2.threshold(smooth_image_gb, 127,255, cv2.ADAPTIVE_THRESH_MEAN_C) # threshold
 cv2.imshow("output2", thresh1)
 cv2.waitKey(0)
+
+
+def contours(filtered_image, baseImg):
+    # find contours in the binary image
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(baseImg, contours, -1, (0, 255, 0), 3)
+    plt.figure()
+    plt.imshow(baseImg)
+    plt.title('Contours on the original image')
+    plt.show()
+
+contours(gray_image, imS)
