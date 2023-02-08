@@ -3,10 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+# Mise en valeur d'un objet avec un bounding box
+def highlightItem(image,x1,y1,x2,y2):
+    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 5) # Dessiner un carré vert
+
 # Code test ouvrir image d'un dossier
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)
 image_test = cv2.imread("data\Images\Chambre\IMG_6567.JPG") # Ajouter le chemin de l'image
 imS = cv2.resize(image_test, (6000, 4000)) # sans le resize, l'affichage est trop grand
+highlightItem(imS,2500,1000,3500,2100)
 cv2.imshow("output", imS)
 cv2.waitKey(0)
 
