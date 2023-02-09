@@ -14,6 +14,20 @@ def highlightItem(image, x1, y1, x2, y2):
     cv2.rectangle(image, (x1 - 2, y1 - 70), (x2 + 6, y1), (0, 255, 0), -1)
     cv2.putText(image, 'Detected object num 1', (x1 + 20, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 0), 2)
 
+# Retourner masque
+def getMask(image):
+    mask0 = np.zeros(image.shape[:2], np.uint8)
+    mask0[1000:3000, 1000:4000] = 255
+    return mask0
+
+
+# Afficher masque
+def showMask(image):
+    plt.figure()
+    masked = cv2.bitwise_and(image, image, mask=getMask(image))
+    plt.imshow(masked)
+    plt.title('Show Mask Test')
+    plt.show()
 
 def opening_file(path):
     if platform.system() == "Windows":
@@ -91,3 +105,5 @@ if __name__ == '__main__':
     img = opening_file(img_path)
     thresh = image_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
     contours_detection(thresh, img)
+    showMask(img)
+
