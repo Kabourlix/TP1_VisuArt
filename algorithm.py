@@ -5,4 +5,4 @@ if __name__ == "__main__":
     img = util.load_img(path)
     #room = util.get_room(path)
     #util.quickPlot(img, f"Imported Image in {room.name}")
-    util.quickPlot(img, f"Imported Image")
+    util.quick_plot(img, f"Imported Image")

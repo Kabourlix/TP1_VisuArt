@@ -79,7 +79,7 @@ def get_path():
     return args.path[0]
 
 
-def quickPlot(img, title="", figsize=None, cmap="Greys", binary = True):
+def quick_plot(img, title="", figsize=None, cmap="Greys", binary=True):
     """
     Plot the image
     :param binary: True if the image is binary so black and white
@@ -89,30 +89,36 @@ def quickPlot(img, title="", figsize=None, cmap="Greys", binary = True):
     :param img: The image to be plotted
     """
     plt.figure()
-    #Trasncript image from bgr to rgb
+    # Trasncript image from bgr to rgb
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    plt.imshow(img, cmap=cmap, interpolation= None if binary else 'nearest')
+    plt.imshow(img, cmap=cmap, interpolation=None if binary else 'nearest')
     plt.title(title)
     print("The image is plotted")
     plt.show()
 
 
-def quick_plot2(img1, img2, title1="", title2="", figsize=None):
+def quick_plot2(img1, img2, title1="", title2="", figsize=None, cmap="Greys", binary=True):
     """
     Plot the image
+    :param cmap:
+    :param figsize:
+    :param title2:
+    :param title1:
+    :param img2:
+    :param img1:
     :param img: The image to be plotted
     """
     plt.figure()
     plt.subplot(121)
-    plt.imshow(img1)
+    plt.imshow(img1, cmap=cmap, interpolation=None if binary else 'nearest')
     plt.title(title1)
     plt.subplot(122)
-    plt.imshow(img2)
+    plt.imshow(img2, cmap=cmap, interpolation=None if binary else 'nearest')
     plt.title(title2)
     plt.show()
 
 
-def quick_plot_any(imgs, titles, dim, figsize=None, cmap="Greys", binary = True):
+def quick_plot_any(imgs, titles, dim, figsize=None, cmap="Greys", binary=True):
     """
     Plot images according to the dimension
     :param binary:
@@ -125,12 +131,12 @@ def quick_plot_any(imgs, titles, dim, figsize=None, cmap="Greys", binary = True)
     """
     if len(imgs) != len(titles):
         raise ValueError("The length of imgs and titles are not equal")
-    if len(imgs) != dim[0] * dim[1]:
-        raise ValueError("The length of imgs and dim are not equal")
+    if len(imgs) > dim[0] * dim[1]:
+        raise ValueError("The length of imgs > dim are not equal")
     plt.figure(figsize=figsize)
     for i in range(len(imgs)):
         plt.subplot(dim[0], dim[1], i + 1)
-        plt.imshow(imgs[i], cmap=cmap, interpolation= None if binary else 'nearest')
+        plt.imshow(imgs[i], cmap=cmap, interpolation=None if binary else 'nearest')
         plt.title(titles[i])
     plt.show()
 
@@ -162,17 +168,16 @@ def get_subtracted_threshold(img, ref, threshold):
 
 def draw_contours(image, color=(0, 255, 0), thickness=2):
     """
-    Draw the contours of the image (alteration)
+    Draw the contours of the image (no alteration)
     :param thickness: The thickness of the contours
     :param color: The color of the contours
     :param image: The image to draw the contours from
     :return: The image with contours and the contours
     """
-    img = image.deepcopy()
+    img = image.copy()
     contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    for contour in contours:
-        cv2.drawContours(img, [contour], -1, color, thickness)
-    return image, contours
+    cv2.drawContours(img, contours, -1, color, thickness)
+    return img, contours
 
 
 def draw_contours_in_place(image, color=(0, 255, 0), thickness=2):
@@ -198,22 +203,33 @@ def draw_bounding_boxes(image, contours, color=(0, 255, 0), thickness=2):
     :param image: The image to draw the bounding boxes from
     :return: The image with bounding boxes
     """
-    img = image.deepcopy()
+    img = image.copy()
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(img, (x, y), (x + w, y + h), color, thickness)
     return img
 
 
-def draw_bounding_boxes_in_place(image, contours, color=(0, 255, 0), thickness=2):
+def draw_bounding_boxes_in_place(image, contours, color=(0, 255, 0), thickness=4, threshold=-1):
     """
     Draw the bounding boxes of the image
+    :param threshold:
     :param thickness: The thickness of the bounding box
     :param image: The image to draw the bounding boxes
     :param contours: Contours of the image
     :param color: The color of the bounding box
     :return: None
     """
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
+    bounding_boxes = [cv2.boundingRect(contour) for contour in contours]
+    #sort the bounding boxes by area
+    bounding_boxes = sorted(bounding_boxes, key=lambda x: x[2] * x[3], reverse=True)
+    # #Plot an histogram of the bounding boxes area
+    # areas = [box[2] * box[3] for box in bounding_boxes]
+    # plt.hist(areas, bins=20)
+    # plt.show()
+    if threshold != -1:
+        bounding_boxes = [box for box in bounding_boxes if box[2] * box[3] > threshold]
+
+    for box in bounding_boxes:
+        x, y, w, h = box
         cv2.rectangle(image, (x, y), (x + w, y + h), color, thickness)
