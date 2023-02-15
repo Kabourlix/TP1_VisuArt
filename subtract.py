@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
+from numpy import ndarray
+
 import Utility as util
 import glob
 
@@ -63,7 +65,7 @@ ref = util.load_img('data/Images/Chambre/Reference.JPG')
 
 def transformation(image, ref_img):
     sub = util.get_subtracted_threshold(image, ref_img, 20)
-    kernel = np.ones((15, 15), np.uint8)
+    kernel: ndarray = np.ones((15, 15), np.uint8)
     opening = cv2.morphologyEx(sub, cv2.MORPH_OPEN, kernel)
     opening = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
     blur = cv2.GaussianBlur(opening, (15, 15), 10)
