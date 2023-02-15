@@ -129,6 +129,8 @@ def showMask(image,path):
     plt.title('Show mask on image')
     plt.show()
 
+    return masked
+
 
 def opening_file(path):
     if platform.system() == "Windows":
@@ -163,7 +165,14 @@ def opening_file(path):
 # Convertir en grayscale + blur + threshold
 
 #TODO : Modifier cette fonction ou faites en une autre pour faire le traitement d'image
-def image_preprocessing_naive(image):
+
+def getThresh(image): # même chose que preprocessing mais sans l'affichage
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
+    ret1, thresh1 = cv2.threshold(smooth_image_gb, 127, 255, cv2.ADAPTIVE_THRESH_MEAN_C)  # threshold
+    return thresh1
+
+def show_preprocessing_naive(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
     ret1, thresh1 = cv2.threshold(smooth_image_gb, 127, 255, cv2.ADAPTIVE_THRESH_MEAN_C)  # threshold
@@ -184,7 +193,6 @@ def image_preprocessing_naive(image):
     plt.show()
     return thresh1
 
-
 ####################
 
 # -----------Détection et Affichage des contours----------------
@@ -198,16 +206,26 @@ def contours_detection(filtered_image, baseImg):
     plt.title('Contours on the original image')
     plt.show()
 
+    return contours
+
 
 if __name__ == '__main__':
     print(f"You are currently using {platform.system()}")
     print("-----------------")
 
+    # Ouverture de l'image
     img_path = "data/Images/Cuisine/Reference.JPG" # TODO : Modifier le chemin de l'image ici
-
     img = opening_file(img_path)
-    thresh = image_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
-    contours_detection(thresh, img)
-    #drawMask(img)
-    showMask(img,img_path)
+
+    # Afficher le preprocessing
+    show_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
+
+    # Les etapes avec le mask
+    # drawMask(img)
+    image_with_mask = showMask(img,img_path) # L'image avec que le sol
+
+    # Affichage contours
+    contours = contours_detection(getThresh(image_with_mask), image_with_mask)
+
+    print(contours)
 
