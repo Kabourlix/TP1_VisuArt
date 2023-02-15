@@ -79,9 +79,10 @@ def get_path():
     return args.path[0]
 
 
-def quickPlot(img, title="", figsize=None, cmap="Greys"):
+def quickPlot(img, title="", figsize=None, cmap="Greys", binary = True):
     """
     Plot the image
+    :param binary: True if the image is binary so black and white
     :param figsize: The size of the figure
     :param title: the title of the image
     :param cmap: The color map of the image
@@ -90,7 +91,7 @@ def quickPlot(img, title="", figsize=None, cmap="Greys"):
     plt.figure()
     #Trasncript image from bgr to rgb
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    plt.imshow(img)
+    plt.imshow(img, cmap=cmap, interpolation= None if binary else 'nearest')
     plt.title(title)
     print("The image is plotted")
     plt.show()
@@ -111,9 +112,11 @@ def quick_plot2(img1, img2, title1="", title2="", figsize=None):
     plt.show()
 
 
-def quick_plot_any(imgs, titles, dim, figsize=None):
+def quick_plot_any(imgs, titles, dim, figsize=None, cmap="Greys", binary = True):
     """
     Plot images according to the dimension
+    :param binary:
+    :param cmap:
     :param figsize: The size of the figure
     :param imgs: The images to be plotted
     :param titles: The titles of the images
@@ -127,7 +130,7 @@ def quick_plot_any(imgs, titles, dim, figsize=None):
     plt.figure(figsize=figsize)
     for i in range(len(imgs)):
         plt.subplot(dim[0], dim[1], i + 1)
-        plt.imshow(imgs[i])
+        plt.imshow(imgs[i], cmap=cmap, interpolation= None if binary else 'nearest')
         plt.title(titles[i])
     plt.show()
 
