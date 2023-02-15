@@ -47,6 +47,7 @@ def get_room(path):
     elif platform.system() == "Darwin":
         path = path.replace("\\", "/")
     room = Room.Unknown
+    room_name = "Unknown"
     try:
         if not (os.path.isdir(path)):
             raise FileNotFoundError("Folder not found")
@@ -65,7 +66,7 @@ def get_room(path):
     return room
 
 
-def handle_cmd_args():
+def get_path():
     """
     Handle the command line arguments
     :return: The path of the image
@@ -78,14 +79,20 @@ def handle_cmd_args():
     return args.path[0]
 
 
-def quickPlot(img, title="", figsize=None):
+def quickPlot(img, title="", figsize=None, cmap="Greys"):
     """
     Plot the image
+    :param figsize: The size of the figure
+    :param title: the title of the image
+    :param cmap: The color map of the image
     :param img: The image to be plotted
     """
     plt.figure()
+    #Trasncript image from bgr to rgb
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     plt.imshow(img)
     plt.title(title)
+    print("The image is plotted")
     plt.show()
 
 
