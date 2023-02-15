@@ -11,11 +11,12 @@ foregroundMask = np.zeros((diff.shape[0], diff.shape[1]), dtype=np.uint8)
 #Apply treshold using 3 channels
 dist=0
 treshold = 30
+
+
 for i,row in enumerate(diff):
     for j,pixel in enumerate(row):
-        dist = float(pixel[0]) ** 2 + float(pixel[1]) ** 2 + float(pixel[2]) ** 2
-        dist = np.sqrt(dist)
-        if dist > treshold:
+        sqrDist = float(pixel[0]) ** 2 + float(pixel[1]) ** 2 + float(pixel[2]) ** 2
+        if sqrDist > treshold**2:
             foregroundMask[i,j] = 255
 
 #plot the diff and the mask on the same plot
@@ -26,6 +27,31 @@ plt.subplot(122)
 plt.imshow(foregroundMask, cmap='gray')
 plt.title('Masked difference between the two images')
 plt.show()
+
+# Dilate operation on foreground mask
+kernel = np.ones((5,5),np.uint8)
+dilated = cv2.dilate(foregroundMask, kernel, iterations=1)
+
+# Opening operation on foreground mask
+opening = cv2.morphologyEx(foregroundMask, cv2.MORPH_OPEN, kernel)
+opening2 = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
+
+# Plot results
+plt.figure()
+plt.subplot(221)
+plt.imshow(foregroundMask, cmap='gray')
+plt.title('Masked init')
+plt.subplot(222)
+plt.imshow(dilated, cmap='gray')
+plt.title('Dilated mask')
+plt.subplot(223)
+plt.imshow(opening, cmap='gray')
+plt.title('Opening mask')
+plt.subplot(224)
+plt.imshow(opening2, cmap='gray')
+plt.title('Opening mask 2')
+plt.show()
+
 
 #get the contours of the masked image
 contours, hierarchy = cv2.findContours(foregroundMask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)

@@ -149,6 +149,8 @@ def opening_file(path):
     return img
 
 
+
+
 # # Code test ouvrir image d'un dossier
 # cv2.namedWindow("output", cv2.WINDOW_NORMAL)
 # image_test = cv2.imread("data\Images\Chambre\IMG_6567.JPG")  # Ajouter le chemin de l'image
