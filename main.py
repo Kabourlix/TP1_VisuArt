@@ -217,7 +217,7 @@ if __name__ == '__main__':
     print("-----------------")
 
     # Ouverture de l'image
-    img_path = "data/Images/Cuisine/Reference.JPG" # TODO : Modifier le chemin de l'image ici
+    img_path = "data/Images/Cuisine/IMG_6563.JPG" # TODO : Modifier le chemin de l'image ici
     img = opening_file(img_path)
 
     # Afficher le preprocessing
