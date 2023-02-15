@@ -112,10 +112,13 @@ def getMask(image,path):
 
     return mask0
 
+def applyMaskToImage(image,path):
+    return cv2.bitwise_and(image, image, mask=getMask(image,path))
+
 # Afficher masque
 def showMask(image,path):
 
-    masked = cv2.bitwise_and(image, image, mask=getMask(image,path))
+    masked = applyMaskToImage(image,path)
 
     plt.figure()
     plt.subplot(131)
@@ -222,10 +225,11 @@ if __name__ == '__main__':
 
     # Les etapes avec le mask
     # drawMask(img)
-    image_with_mask = showMask(img,img_path) # L'image avec que le sol
+    showMask(img,img_path) # Afficher le masque
+    image_with_mask = applyMaskToImage(getThresh(img),img_path) # Appliquer le masque le l'image threehold
 
     # Affichage contours
-    contours = contours_detection(getThresh(image_with_mask), image_with_mask)
+    contours = contours_detection(image_with_mask, img) # TODO : Mettre l'image original en 1er paramètre
 
     print(contours)
 
