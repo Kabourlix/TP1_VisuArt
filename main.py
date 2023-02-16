@@ -202,11 +202,12 @@ def show_preprocessing_naive(image):
 def pre_traiter_image(image,path):
     room = path.split('/')[2]
     if room == "Cuisine":
-        compare_images_Cuisine(image)
+        image = compare_images_Cuisine(image)
     elif room == "Chambre":
-        compare_images_Chambre(image)
+        image = compare_images_Chambre(image)
     elif room == "Salon":
-        compare_images_Salon(image)
+        image = compare_images_Salon(image)
+    return image
 
 def compare_images_Cuisine(img):
     # reference image
@@ -221,10 +222,12 @@ def compare_images_Cuisine(img):
     # print the comparison result
     print("resultat de la comparaison: ",ref_img_comp)
     if ref_img_comp >= 542154: # if condition met, modify the image
-        hist_equalization(img)
+        img = hist_equalization(img)
+        return img
     else: # if condition not met, no need to modify
         print("L'image n'a pas besoin de modification")
         return img
+    #return
 
 def compare_images_Chambre(img):
     #reference image
@@ -239,7 +242,8 @@ def compare_images_Chambre(img):
     # print the comparison result
     print("resultat de la comparaison: ",ref_img_comp)
     if ref_img_comp >= 760528: # if condition met, modify the image
-        hist_equalization(img)
+        img = hist_equalization(img)
+        return img
     else: # if condition not met, no need to modify
         print("L'image n'a pas besoin de modification")
         return img
@@ -257,7 +261,8 @@ def compare_images_Salon(img):
     # print the result of the comparison
     print("resultat de la comparaison: ",ref_img_comp)
     if ref_img_comp >= 2067559: # if condition is met, modify the image
-       adjust_light_salon(img)
+       img = adjust_light_salon(img)
+       return img
     else: # if condition not met, no need to modify
         print("L'image n'a pas besoin de modification")
         return img
@@ -275,6 +280,7 @@ def adjust_light_salon(img):
     hls_Img[..., 1] = hls_Img[..., 1] * 0.8
     # the HLS converted image
     img_hls=cv2.cvtColor(hls_Img, cv2.COLOR_HLS2BGR)
+    img= img_hls
     # grayscale HLS image
     img_hls_gray = cv2.cvtColor(img_hls, cv2.COLOR_BGR2GRAY)
 
@@ -292,18 +298,18 @@ def adjust_light_salon(img):
     plt.imshow(img_hls_gray, cmap='gray')
     plt.title('brightness reduced image')
     plt.show()
-    return img_hls_gray
+    return img
 
 
-def hist_equalization(img1):
+def hist_equalization(img):
     # convert the image being treated in grayscale
-    gray_original = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
+    gray_original = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     # histogram calculation of the original image
     hist_gray_original = cv2.calcHist([gray_original], [0], None, [256], [0, 256])
     # Create a matrix to be added to the image for saturation increase
-    M = np.ones(img1.shape, dtype="uint8")*85
+    M = np.ones(img.shape, dtype="uint8")*85
     # the matrix is added to the image
-    added_img = cv2.add(img1,M)
+    added_img = cv2.add(img,M)
     # convert the resulting image to grayscale
     gray_image = cv2.cvtColor(added_img, cv2.COLOR_BGR2GRAY)
     # gray image histogram calculation
@@ -313,6 +319,10 @@ def hist_equalization(img1):
     gray_img_clahe = clahe.apply(gray_image)
     # histogram calculation of the Clahe image
     hist_gray_clahe = cv2.calcHist([gray_img_clahe],[0],None,[256],[0,256])
+    # convert the gray image with clahe into BGR image
+    img_clahe = cv2.cvtColor(gray_img_clahe,cv2.COLOR_GRAY2BGR)
+    # img clahe becomes the new img
+    img = img_clahe
     # show the histograms
     plt.figure(figsize=(10,16))
     plt.subplot(321)
@@ -343,7 +353,9 @@ def hist_equalization(img1):
     plt.title('Gray clahe histogram')
     plt.plot(hist_gray_clahe, color='m')
     plt.show()
-    return gray_img_clahe
+    return img
+
+
 # -----------Détection et Affichage des contours----------------
 def contours_detection(filtered_image, baseImg):
     # find contours in the binary image
@@ -363,18 +375,18 @@ if __name__ == '__main__':
     print("-----------------")
 
     # Ouverture de l'image
-    img_path = "data/Images/Cuisine/IMG_6563.JPG" # TODO : Modifier le chemin de l'image ici
-    img_path1 = "data/Images/Cuisine/IMG_6565.JPG"
+    img_path = "data/Images/Cuisine/IMG_6565.JPG" # TODO : Modifier le chemin de l'image ici
+
     img = opening_file(img_path)
-    img1 = opening_file(img_path1)
-    pre_traiter_image(img, img_path)
-    pre_traiter_image(img1,img_path1)
+
+    img_pre_treated = pre_traiter_image(img,img_path)
     # Afficher le preprocessing
     show_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
-
+    show_preprocessing_naive(img_pre_treated)
     # Les etapes avec le mask
     # drawMask(img)
     showMask(img,img_path) # Afficher le masque
+
     image_with_mask = applyMaskToImage(getThresh(img),img_path) # Appliquer le masque le l'image threehold
 
     # Affichage contours
