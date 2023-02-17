@@ -209,6 +209,14 @@ def draw_bounding_boxes(image, contours, color=(0, 255, 0), thickness=2):
         cv2.rectangle(img, (x, y), (x + w, y + h), color, thickness)
     return img
 
+def highlightItem(image, x1, y1, x2, y2,index):
+    # Dessiner un carré vert
+    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 10)
+    # Chercher taille du rectangle de text
+    # Afficher texte
+    cv2.rectangle(image, (x1 - 2, y1 - 70), (x2 + 6, y1), (0, 255, 0), -1)
+    cv2.putText(image, 'Object n°'+str(index), (x1 + 20, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 0), 2)
+
 
 def draw_bounding_boxes_in_place(image, contours, color=(0, 255, 0), thickness=4, threshold=-1):
     """
@@ -230,6 +238,7 @@ def draw_bounding_boxes_in_place(image, contours, color=(0, 255, 0), thickness=4
     if threshold != -1:
         bounding_boxes = [box for box in bounding_boxes if box[2] * box[3] > threshold]
 
-    for box in bounding_boxes:
+    for i,box in enumerate(bounding_boxes):
         x, y, w, h = box
-        cv2.rectangle(image, (x, y), (x + w, y + h), color, thickness)
+        highlightItem(image, x, y, x+w, y+h, i) # this is what is replaced by annie
+        # cv2.rectangle(image, (x, y), (x + w, y + h), color, thickness) # this is the original code
