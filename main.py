@@ -199,15 +199,18 @@ def show_preprocessing_naive(image):
 ####################
 
 # -----------Détection et Affichage des contours----------------
-def contours_detection(filtered_image, baseImg):
-    # find contours in the binary image
-    contours, hierarchy = cv2.findContours(filtered_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    print(f"{len(contours)} contours detected")
+
+def show_contours(baseImg, contours):
     cv2.drawContours(baseImg, contours, -1, (0, 255, 0), 3)
     plt.figure()
     plt.imshow(baseImg)
     plt.title('Contours on the original image')
     plt.show()
+
+def contours_detection(filtered_image):
+    # find contours in the binary image
+    contours, hierarchy = cv2.findContours(filtered_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    print(f"{len(contours)} contours detected")
 
     return contours
 
@@ -229,7 +232,14 @@ if __name__ == '__main__':
     image_with_mask = applyMaskToImage(getThresh(img),img_path) # Appliquer le masque le l'image threehold
 
     # Affichage contours
-    contours = contours_detection(image_with_mask, img) # TODO : Mettre l'image original en 1er paramètre
+    contours = contours_detection(image_with_mask)
+    show_contours(img,contours)
 
-    print(contours)
+    # Filtrer les contours : problème ! ça prend les contours du bordds avec le masque ( on en a 142 ! )
+    plt.figure()
+    plt.title('Nombre de points de chaque contour i')
+    x = list(range(0,len(contours)))
+    y = [len(contours[i]) for i in x]
+    plt.plot(x,y)
+    plt.show()
 
