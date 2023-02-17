@@ -7,19 +7,46 @@ img = cv2.imread("data/Images/Chambre/IMG_6569.JPG")
 ref = cv2.imread("data/Images/Chambre/Reference.JPG")
 
 diff = cv2.absdiff(img, ref)
-foregroundMask = np.zeros((diff.shape[0], diff.shape[1]), dtype=np.uint8)
+#foregroundMask = np.zeros((diff.shape[0], diff.shape[1]), dtype=np.uint8)
 #Apply treshold using 3 channels
 dist=0
-treshold = 30
+threshold = 10
+thresholds = [5,10, 15, 16, 17, 18, 19, 20, 25]
+factor = [0.1, 0.2, 0.3, 0.4]
+dot = (diff*diff).sum(axis=2)
+fore = []
+for t in thresholds:
+    fore.append((dot > t ** 2).astype(np.uint8))
+
+plt.figure(figsize=(10,10))
+#subplot 33 with all image tresholded
+for i in range(9):
+    plt.subplot(3,3,i+1)
+    plt.imshow(fore[i], cmap='gray')
+    plt.title(f"threshold = {thresholds[i]}")
+plt.show()
+
+weightedThreshold = 0
+for i in range(4):
+    weightedThreshold += factor[i] * fore[i]
+
+plt.figure()
+plt.imshow(weightedThreshold, cmap='gray')
+plt.title(f"weightedThreshold")
+plt.show()
 
 
-for i,row in enumerate(diff):
-    for j,pixel in enumerate(row):
-        sqrDist = float(pixel[0]) ** 2 + float(pixel[1]) ** 2 + float(pixel[2]) ** 2
-        if sqrDist > treshold**2:
-            foregroundMask[i,j] = 255
 
+foregroundMask = (diff*diff).sum(axis=2) > threshold ** 2
+print(f"foregroundMask.shape = {foregroundMask.shape} and diff.shape = {diff.shape}")
+# for i,row in enumerate(diff):
+#     for j,pixel in enumerate(row):
+#         sqrDist = float(pixel[0]) ** 2 + float(pixel[1]) ** 2 + float(pixel[2]) ** 2
+#         if sqrDist > treshold**2:
+#             foregroundMask[i,j] = 255
+# print(f"foregroundMask.shape = {foregroundMask.shape} and diff.shape = {diff.shape}")
 #plot the diff and the mask on the same plot
+plt.figure()
 plt.subplot(121)
 plt.imshow(diff)
 plt.title('Difference between the two images')
@@ -28,6 +55,10 @@ plt.imshow(foregroundMask, cmap='gray')
 plt.title('Masked difference between the two images')
 plt.show()
 
+foregroundMask = foregroundMask.astype(np.uint8)
+
+
+#
 # Dilate operation on foreground mask
 kernel = np.ones((5,5),np.uint8)
 dilated = cv2.dilate(foregroundMask, kernel, iterations=1)
