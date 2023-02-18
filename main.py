@@ -381,8 +381,8 @@ if __name__ == '__main__':
     img_path = "data/Images/Cuisine/IMG_6565.JPG" # TODO : Modifier le chemin de l'image ici
 
     img = opening_file(img_path)
-
     img_pre_treated = pre_traiter_image(img,img_path)
+
     # Afficher le preprocessing
     show_preprocessing_naive(img) # TODO : Utiliser votre fonction ici
     show_preprocessing_naive(img_pre_treated)

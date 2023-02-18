@@ -64,11 +64,14 @@ ref = util.load_img('data/Images/Chambre/Reference.JPG')
 # #
 
 def transformation(image, ref_img):
+
     sub = util.get_subtracted_threshold(image, ref_img, 20)
+    #debut morphologique
     kernel: ndarray = np.ones((15, 15), np.uint8)
     opening = cv2.morphologyEx(sub, cv2.MORPH_OPEN, kernel)
     opening = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
     blur = cv2.GaussianBlur(opening, (15, 15), 10)
+    #fin morphologique
     flood = blur.copy()
     h, w = flood.shape[:2]
     mask = np.zeros((h + 2, w + 2), np.uint8)
