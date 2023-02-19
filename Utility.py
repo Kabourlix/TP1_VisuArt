@@ -66,17 +66,19 @@ def get_room(path):
     return room
 
 
-def get_path():
+def get_paths():
     """
     Handle the command line arguments
     :return: The path of the image
     """
     import argparse
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('path', metavar='path', type=str, nargs=1,
-                        help='the path of the image')
-    args = parser.parse_args()
-    return args.path[0]
+    #Parse to get two paths of images
+    #cmd shall be : python test.py -i <path1> -r <path2>
+    parser = argparse.ArgumentParser(description='Get img and a ref to detect objects')
+    parser.add_argument('-i', '--img', help='The path of the image to analyze', required=True)
+    parser.add_argument('-r', '--ref', help='The path of the reference image', required=True)
+    args = vars(parser.parse_args())
+    return args['img'], args['ref']
 
 
 def quick_plot(img, title="", figsize=None, cmap="Greys", binary=True):

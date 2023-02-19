@@ -2,6 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 # print(f"{os.path.isfile('data/Images/Chambre/IMG_6567.JPG')} : img exists")
 img = cv2.imread("data/Images/Chambre/IMG_6569.JPG")
 ref = cv2.imread("data/Images/Chambre/Reference.JPG")
