@@ -108,6 +108,10 @@ def get_masked_img(image,mask0):
     newImg = image.copy()
     return cv2.bitwise_and(newImg, newImg, mask=mask0)
 
+def get_inverted(img):
+    newImg = img.copy()
+    return cv2.bitwise_not(newImg)
+
 def get_contours(flood, init_img):
     contours = util.draw_contours_in_place(flood)
     result = init_img.copy()
@@ -131,9 +135,12 @@ if __name__ == "__main__":
     flood_img = flood_fill(morph_img)
     util.quick_plot(flood_img, 'Flood Fill', figsize=(10, 10), cmap='Greys_r', binary=True)
 
-    mask = getMask(img,path_img)
-    mask_img = get_masked_img(img,mask)
-    util.quick_plot(mask_img, 'Mask used', figsize=(10, 10), cmap='Greys_r', binary=True)
+    inverted_img = get_inverted(flood_img)
+    util.quick_plot(inverted_img, 'Invert', figsize=(10, 10), cmap='Greys_r', binary=True)
 
-    contours_img = get_contours(flood_img, img)
+    mask = getMask(img,path_img)
+    mask_img = get_masked_img(inverted_img,mask)
+    util.quick_plot(mask_img, 'Adding Mask', figsize=(10, 10), cmap='Greys_r', binary=True)
+
+    contours_img = get_contours(mask_img, img)
     util.quick_plot(contours_img, 'Contours', figsize=(10, 10), cmap='Greys_r', binary=True)
