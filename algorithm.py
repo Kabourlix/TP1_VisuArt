@@ -135,6 +135,9 @@ if __name__ == "__main__":
     flood_img = flood_fill(morph_img)
     util.quick_plot(flood_img, 'Flood Fill', figsize=(10, 10), cmap='Greys_r', binary=True)
 
+    # TODO : " Durant ma version, les objets sont noirs et le sol est blanc (il faut l'inverse).
+    #  J'ai donc inversé les bits comme solution temporaire.
+    #  Il faudra enlever cette méthode ci dessous quand le traitement est réparé - annie "
     inverted_img = get_inverted(flood_img)
     util.quick_plot(inverted_img, 'Invert', figsize=(10, 10), cmap='Greys_r', binary=True)
 
