@@ -35,6 +35,20 @@ def load_img(path):
         print("The path exists and the image is stored in img with shape {}".format(img.shape))
     return img
 
+def find_room(path):
+    """
+    Get the room name from the path : a simpler version than get_room
+    :param path: The relative path of the image
+    :return: The room via enum
+    """
+
+    if platform.system() == "Darwin":
+        path = path.replace("\\", "/")
+
+    room_name = path.split("/")[-2]
+    print("The room is {}".format(room_name))
+
+    return room_name
 
 def get_room(path):
     """
