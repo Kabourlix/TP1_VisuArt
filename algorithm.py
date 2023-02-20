@@ -146,4 +146,4 @@ if __name__ == "__main__":
     util.quick_plot(mask_img, 'Adding Mask', figsize=(10, 10), cmap='Greys_r', binary=True)
 
     contours_img = get_contours(mask_img, img)
-    util.quick_plot(contours_img, 'Contours', figsize=(10, 10), cmap='Greys_r', binary=True)
+    util.quick_plot(contours_img, 'Contours Detection', figsize=(10, 10), cmap='Greys_r', binary=True)
