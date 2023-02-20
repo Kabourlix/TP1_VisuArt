@@ -1,13 +1,14 @@
 import Utility as util
 import cv2
+import glob
 import numpy as np
 
 
 def threshold(img, ref, t_value):
     diff = cv2.absdiff(img, ref)
     gray_image = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-    smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
-    thresholded = cv2.adaptiveThreshold(smooth_image_gb, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 5)
+    #smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
+    thresholded = cv2.adaptiveThreshold(gray_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 5)
     return thresholded
 
 
@@ -15,15 +16,17 @@ def morph_operation(thresholded):
     # TODO : Apply morphological operation
     kernel = np.ones((5, 5), np.uint8)
     opening = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel, iterations=3)
-    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=3)
-    return closing
+    #closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=3)
+    return opening
 
 
 def flood_fill(closing):
+    #take the negative of the image
     flood = closing.copy()
+    flood = cv2.bitwise_not(flood)
     h, w = flood.shape[:2]
     mask = np.zeros((h + 2, w + 2), np.uint8)
-    cv2.floodFill(flood, mask, (0, 0), 0)
+    cv2.floodFill(flood, mask, (0, 0), 255)
     return flood
 
 def getMask(image,path):
@@ -138,11 +141,11 @@ if __name__ == "__main__":
     # TODO : " Durant ma version, les objets sont noirs et le sol est blanc (il faut l'inverse).
     #  J'ai donc inversé les bits comme solution temporaire.
     #  Il faudra enlever cette méthode ci dessous quand le traitement est réparé - annie "
-    inverted_img = get_inverted(flood_img)
-    util.quick_plot(inverted_img, 'Invert', figsize=(10, 10), cmap='Greys_r', binary=True)
+    #inverted_img = get_inverted(flood_img)
+    #util.quick_plot(inverted_img, 'Invert', figsize=(10, 10), cmap='Greys_r', binary=True)
 
     mask = getMask(img,path_img)
-    mask_img = get_masked_img(inverted_img,mask)
+    mask_img = get_masked_img(flood_img,mask)
     util.quick_plot(mask_img, 'Adding Mask', figsize=(10, 10), cmap='Greys_r', binary=True)
 
     contours_img = get_contours(mask_img, img)
