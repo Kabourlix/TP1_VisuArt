@@ -231,7 +231,7 @@ def highlightItem(image, x1, y1, x2, y2,index):
     # Chercher taille du rectangle de text
     # Afficher texte
     cv2.rectangle(image, (x1 - 2, y1 - 70), (x2 + 6, y1), (0, 255, 0), -1)
-    cv2.putText(image, 'Object n°'+str(index), (x1 + 20, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 0), 2)
+    cv2.putText(image, 'Object num '+str(index), (x1 + 20, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 0), 2)
 
 
 def draw_bounding_boxes_in_place(image, contours, color=(0, 255, 0), thickness=4, threshold=-1):
