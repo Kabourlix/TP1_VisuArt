@@ -5,26 +5,30 @@ import numpy as np
 
 def threshold(img, ref, t_value):
     diff = cv2.absdiff(img, ref)
-    # TODO : Apply threshold below (naive version is below)
-    thresholded = cv2.threshold(diff, t_value, 255, cv2.THRESH_BINARY)
+    gray_image = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+    smooth_image_gb = cv2.GaussianBlur(gray_image, (15, 15), 0)
+    thresholded = cv2.adaptiveThreshold(smooth_image_gb, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 5)
     return thresholded
 
 
-def morph_operation(img):
+def morph_operation(thresholded):
     # TODO : Apply morphological operation
-    return img
+    kernel = np.ones((5, 5), np.uint8)
+    opening = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel, iterations=3)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=3)
+    return closing
 
 
-def flood_fill(img):
-    flood = img.copy()
+def flood_fill(closing):
+    flood = closing.copy()
     h, w = flood.shape[:2]
     mask = np.zeros((h + 2, w + 2), np.uint8)
     cv2.floodFill(flood, mask, (0, 0), 0)
     return flood
 
 
-def get_contours(img, init_img):
-    contours = util.draw_contours_in_place(img)
+def get_contours(flood, init_img):
+    contours = util.draw_contours_in_place(flood)
     result = init_img.copy()
     util.draw_bounding_boxes_in_place(result, contours, color=(255, 0, 0), thickness=8, threshold=25000)
     return result
